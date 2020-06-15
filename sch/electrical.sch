@@ -28,7 +28,7 @@ $EndComp
 $Sheet
 S 1950 2500 600  350 
 U 5E214242
-F0 "RS-25-12" 50
+F0 "HDR-60-24" 50
 F1 "power_adapter.sch" 50
 F2 "+12" O L 1950 2600 50 
 F3 "GND" U L 1950 2700 50 
