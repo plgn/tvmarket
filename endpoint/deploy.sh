@@ -1,0 +1,1 @@
+st-flash write build/endpoint_fw.bin 0x08000000
