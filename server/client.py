@@ -1,29 +1,34 @@
 import asyncio
 import time
+from pathlib import Path
+import json
 
 import paho.mqtt.client as mqtt
-# from omxplayer.player import OMXPlayer
-from pathlib import Path
+
+from omxplayer.player import OMXPlayer
 
 
 HOST = '127.0.0.1'
 VIDEO_PATH = Path('/home/pi/tech_video_comp0001-0630.mp4')
+TIMECODES_PATH = Path('/home/pi/tvmarket/server/timecodes.json')
 
+KEY_IDLE = 'IDLE'
+KEY_OPENING = 'OPENING'
+KEY_CYCLE_CONTENT = 'CONTENT'
+KEY_HOLD = 'HOLD ON'
+KEY_RETURN = 'RETURN'
+KEY_QR = 'QR CODE'
 
 class Machine:
 
-   # state_idle = 'IDLE'
-   # state_opening = 'OPENING'
-   # state_cycle_content = 'CYCLE CONTENT'
-   # state_finish_content = 'FINISH CONTENT'
-   # state_hold = 'HOLD ON'
-   # state_return = 'RETURN'
-   # state_qr = 'QR CODE'
 
     
 
     def __init__(self):
-        # self.player = OMXPlayer(VIDEO_PATH, args=['--blank', '--loop'])
+        self.player = OMXPlayer(VIDEO_PATH, args=['--blank', '--loop'])
+
+        with open(TIMECODES_PATH, 'r') as f:
+            self.timecodes = json.load(f)
 
         self.state_idle = self.idle
         self.state_opening = self.opening
@@ -37,35 +42,34 @@ class Machine:
 
     async def idle(self):
         print('idling')
-        #await asyncio.sleep(1)
+        self.player.set_position(self.timecodes[KEY_IDLE])
 
     async def opening(self):
         print('opening')
-        #await asyncio.sleep(1)
+        self.player.set_position(self.timecodes[KEY_OPENING])
         self.state = self.state_cycle_content
 
     async def cycle_content(self):
         print('cycling')
-        await asyncio.sleep(1)
+        self.player.set_position(self.timecodes[KEY_CYCLE_CONTENT])
 
     async def hold_on(self):
         print('hold on')
-        #await asyncio.sleep(1)
+        self.player.set_position(self.timecodes[KEY_HOLD])
         self.state = self.state_finish_content 
     
     async def finish_content(self):
         print('finishing content')
-        #await asyncio.sleep(1)
         self.state = self.state_return
 
     async def show_return(self):
         print('returning')
-        #await asyncio.sleep(1)
+        self.player.set_position(self.timecodes[KEY_RETURN])
         self.state = self.state_cycle_content
 
     async def show_qr(self):
         print('showing qr')
-        #await asyncio.sleep(1)
+        self.player.set_position(self.timecodes[KEY_QR])
         self.state = self.state_cycle_content
 
 
@@ -100,10 +104,7 @@ def parse_message(mosq, obj, msg):
                 machine.state = machine.state_idle
     elif sensor == 'interaction':
         if msg.payload == b'True':  # thing taken
-            if machine.state in [machine.state_cycle_content, machine.state_qr]: 
-                machine.state = machine.state_hold_on
-            else:
-                machine.state = machine.state_qr
+            machine.state = machine.state_qr
         else:  # thing put down
             machine.state = machine.state_cycle_content
 

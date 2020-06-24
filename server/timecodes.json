@@ -1,12 +1,9 @@
 {
     "IDLE": 0, 
-    "OPENING 1": 1,
-    "OPENING 2": 2,
-    "OPENING 3": 3,
-    "CONTENT": 4,
+    "OPENING": 1,
+    "CONTENT": 5,
     "QR CODE": 16,
-    "HOLD ON 1": 18,
-    "HOLD ON 2": 19,
+    "HOLD ON": 18,
     "RETURN": 20
 }
     
