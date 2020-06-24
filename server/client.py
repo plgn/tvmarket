@@ -70,7 +70,6 @@ class Machine:
     async def show_qr(self):
         print('showing qr')
         self.player.set_position(self.timecodes[KEY_QR])
-        self.state = self.state_cycle_content
 
 
 machine = Machine()
@@ -124,9 +123,8 @@ async def read_messages():
 
 
 loop = asyncio.get_event_loop()
-task = loop.create_task(read_messages())
-task2 = loop.create_task(process_state())
-
+loop.create_task(read_messages())
+loop.create_task(process_state())
 
 loop.run_forever()
 
